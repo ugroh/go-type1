@@ -1,0 +1,190 @@
+<h1>Go Fonts in Postscript Type 1</h1>
+<p>This is a repository dedicated to storing the Postscript Type1 versions of
+popular fonts for the game
+<a href="https://en.wikipedia.org/wiki/Go_(game)">Go</a>, also known as Igo (囲碁),
+Baduk (바둑), Weiqi (围棋), for use in LaTeX.</p>
+<p>In summary, this repository contains font information for:</p>
+<ul>
+<li><strong>Igo</strong>: A font created in 1991 by Hanna Kolodziejska and modified by
+Etienne Dupuis and others, that evokes the style of the old Ishi press and
+Kiseido books.</li>
+<li><strong>Gooe</strong>: A font created by Dan Bump and popularized by Reid Augustin’s
+<a href="http://search.cpan.org/~reid/Games-Go-Sgf2Dg-4.252/">sgf2dg script</a> for
+creating go books. See also the <a href="http://senseis.xmp.net/?Sgf2dg">Sensei’s library
+article</a> for more details about usage and
+history. <em>Note:</em> While this repo contains the fonts, it does not contain
+the sgf2dg script or related content.</li>
+<li><strong>Gnos</strong>: My modification of the Gooe font series, which makes the
+border-lines a bolder, the star points bigger, and makes it easier to use in
+scripts.</li>
+<li><strong>Jigo</strong>: My modification of the Igo font series that allows the fonts to be
+used directly in scripts</li>
+</ul>
+<p>All of these fonts are available as Postscript Type 1 fonts, which is an old
+vector graphic font standard that can be used with LaTeX.</p>
+<p>This work derives from <a href="https://github.com/tasuk">Vit Brunner (tasuki)</a> who
+created a series of tsumego books using the Type1 Gooe font. Later, this work
+was helped tremendously by the existence of <a href="https://github.com/nyamcoder/tex-src/blob/master/baduk/baduk.tex">Nyamcoder’s
+instructions</a>
+for installing the Type1 Igo font. Ultimately, these fonts exist to be used in
+<a href="https://www.github.com/Kashomon/gpub">GPub</a>, a Javascript library I created for generating
+Go books.</p>
+<p>These packages are designed to work with LaTeX, but there’s no reason it
+shouldn’t work with a LaTeX compatible compiler like XeTeX.</p>
+<h3>Recommendations</h3>
+<p>If you’re here trying to decide what fonts to use in generating Go books then
+here are my <strong>recommendations</strong></p>
+<ol>
+<li>If you are planning on creating or using scripts to generate your books:
+<ol>
+<li>Gnos: Fully featured; Looks great in print form.</li>
+<li>Gooe: Fully featured, has a less bold-look than Gnos.</li>
+<li>Jigo: Missing glyphs present in the other two fonts: No marks (e.g.,
+triangle, square) on empty intersections and no labels on stones other
+than numbers (e.g., stone labeled with ‘a’).</li>
+</ol>
+</li>
+<li>If you are manually creating diagrams yourself only using LaTeX:
+<ol>
+<li>Igo: Igo is meant for users creating diagrams manually at LaTeX. It
+comes at the cost of having missing glyphs, being slow to compile, and
+creating incompatibilities with other LaTeX packages.</li>
+</ol>
+</li>
+</ol>
+<h3>What’s here</h3>
+<p>There are four directories containing font files:</p>
+<pre><code>  igo-fonts/
+  jigo-fonts/
+  gooe-fonts/
+  gnos-fonts/
+</code></pre>
+<p>In both of these, there are 4 types of files of interest:</p>
+<ul>
+<li><em>.pfb</em> : these are the Type1 font definitions</li>
+<li><em>.tfm</em> : the LaTeX font metric files.</li>
+<li><em>.map</em> : the mapping-declaration files that tell latex how to associate the
+fonts with names</li>
+<li><em>.sty</em> : Tex macro files that make it easier to work with the font</li>
+</ul>
+<h3>Tex and Tex Distributions.</h3>
+<p>Installation of these fonts relies heavily on your particular distribution of TeX.
+You’ll be installing the font files in TEXMFHOME.  Assuming you’ve installed
+TeX, you can find the location of your TEX directories with:</p>
+<pre><code class="language-shell">kpsewhich -expand-var &quot;\$TEXMFHOME&quot;
+</code></pre>
+<p>or</p>
+<pre><code class="language-shell">$(kpsewhich -var-value TEXMFHOME)
+</code></pre>
+<h3>Quick Installation Steps</h3>
+<p>The easiest way to install is to use the installer script</p>
+<pre><code class="language-shell"># Install gooe, gnos, igo
+installer.sh install all
+
+# Install just gnos
+installer.sh install gnos
+</code></pre>
+<h3>Long Installation Steps for {Gnos,gooe,igo}</h3>
+<p>You must perform a bit of work for LaTeX to know about your fonts, if you want
+to do it by hand. I don’t claim to be an expert in TeX/LaTeX, but this seems to
+work.</p>
+<pre><code class="language-shell">cd go-type1
+texhome=$(kpsewhich -var-value TEXMFHOME)
+echo $texhome   # Should be non empty
+mkdir -p $texhome/tex/latex/gooe
+mkdir -p $texhome/fonts/map/dvips/gooe
+mkdir -p $texhome/fonts/type1/gooe
+mkdir -p $texhome/fonts/tfm/gooe
+cp gooe-fonts/gooemacs.sty $texhome/tex/latex/gooe
+cp gooe-fonts/gooe.map $texhome/fonts/map/dvips/gooe
+cp gooe-fonts/*.pfb $texhome/fonts/type1/gooe
+cp gooe-fonts/*.tfm $texhome/fonts/tfm/gooe
+texhash $texhome
+updmap --enable Map=gooe.map
+</code></pre>
+<h3>Using the Fonts</h3>
+<p>It should just work! What do I mean? Just make sure in your LaTeX, you have the
+following at the top:</p>
+<pre><code class="language-latex">\usepackage[T1]{fontenc}
+</code></pre>
+<p>Then, LaTeX should just use the Type1 font.</p>
+<p>See the example below for more information. Ther are also more exmaple TeX files
+in the examples/ directory.</p>
+<h4>The LaTeX structure</h4>
+<p>LaTeX starts with some header declarations, followed by begin document, content,
+and lastly, ending the document.</p>
+<pre><code class="language-latex">\documentclass{article}
+\usepackage{gnos} % or igo, gooemacs, jigofonts
+\usepackage[T1]{fontenc}
+
+\begin{document}
+
+% Content goes here
+
+\end{document}
+</code></pre>
+<h4>Gooe Example</h4>
+<p>Here’s an example of a simple problem using the Gooe font.</p>
+<pre><code class="language-latex">\begin{center}
+{\goo
+\0??&lt;\0??(\0??(\- !(\0??(\0??(\0??(\0??(\0??(\0??(
+\- ![\- !+\- !+\- !+\- @+\- @+\0??+\0??+\0??+\0??+
+\0??[\- @+\- @+\- @+\0??+\0??+\0??+\0??+\0??+\0??+
+\0??[\0??+\0??+\0??*\0??+\0??+\0??+\0??+\0??+\0??*
+\0??[\- @+\0??+\0??+\0??+\0??+\0??+\0??+\0?l+\0??+
+\0??[\0??+\0??+\0??+\0??+\0??+\0??+\0??+\0??+\0??+
+}
+A Simple Go Problem!
+\end{center}
+</code></pre>
+<h4>Igo Example</h4>
+<p>Here’s the same problem with the Igo font.</p>
+<pre><code class="language-latex">\white{a18,b18,c18,d18,d19}
+\black{b17,c17,d17,e18,f18,b15}
+\begin{center}
+\shortstack{\showgoban[a14,k19]\\ A Simple Go Problem}
+\end{center}
+</code></pre>
+<h4>Gnos Example</h4>
+<p>Here’s the same problem with the Gnos font. Warning: Gnos is not designed to be
+easy to use.  It’s meant to be generated by other languages.</p>
+<pre><code class="language-latex">{\gnos%
+&lt;((!((((((\\
+!!!!@@++++\\
+\char91\char64@@++++++\\
+\char91\char43\char43\char42+++++*\\
+\char91@++++++++\\
+\char91+++++++++\\
+}
+</code></pre>
+<h3>Converting METAFONT to Type1</h3>
+<p>Converting from METAFONT to Type1 fonts can be a challenge. Here’s what I did,
+mostly a record for myself, but it might be useful for you too.</p>
+<p>First, some setup:</p>
+<ul>
+<li>Update homebrew (OSX package manager)</li>
+<li>Download mftrace</li>
+<li>Install autoconf via homebrew (<code>brew install autoconf</code>)</li>
+<li>Run autoconf on mftrace’s autogen.sh</li>
+<li><code>brew install potrace</code> – font tracing program</li>
+<li><code>brew install fontforge</code></li>
+<li>Go back to mftrace and run <code>./configure</code> and <code>make install</code></li>
+</ul>
+<p>To convert METAFONT to Type1, run:</p>
+<pre><code class="language-shell">mftrace --formats=PFB myfile.mf
+</code></pre>
+<p>To regenerate the TFM files, run:</p>
+<pre><code class="language-shell">mktextfm myfile.mf
+</code></pre>
+<h3>Resources</h3>
+<p>For more details on all of this, see:</p>
+<ul>
+<li><a href="https://github.com/tasuk/tsumego">Tasuki’s Tsumego Repo</a></li>
+<li><a href="http://search.cpan.org/~reid/Games-Go-Sgf2Dg-4.211/sgf2dg">sgf2dg on CPAN</a></li>
+<li><a href="http://www.ctan.org/tex-archive/info/Type1fonts/fontinstallationguide/">Font Intallation Guide</a></li>
+<li><a href="http://www.ctan.org/tex-archive/fonts/utilities/fontinst/doc/manual/">fontinst guide</a></li>
+<li><a href="http://www.tug.org/mactex/fonts/fonttutorial-current.html">Font Tutorial</a></li>
+<li><a href="http://macosx-tex.576846.n2.nabble.com/font-install-July-6-td611560.html">Discussion on LaTeX font installation I found useful</a></li>
+<li><a href="http://www.ntg.nl/eurotex/szabo.pdf">Converting METAFONT to type 1</a></li>
+<li><a href="https://github.com/nyamcoder/tex-src/blob/master/baduk/baduk.tex">Nyamcoder’s Baduk work with Igo</a></li>
+</ul>
